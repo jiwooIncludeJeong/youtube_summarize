@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, Fab, TextField, Typography } from '@mui/material'
 import { Spacing } from '@/styles/Spacing'
 import { useCallback, useState } from 'react'
 import { Flex } from '@/styles/Flex'
@@ -7,9 +7,15 @@ import Markdown from 'react-markdown'
 import { useMutation } from '@tanstack/react-query'
 import { isValidYoutubeURL } from '@/utils/isValidYoutubeURL'
 import { extractVideoId } from '@/utils/extractVideoId'
+import FavoriteIcon from '@mui/icons-material/ContentCopy'
+import DownloadIcon from '@mui/icons-material/Downloading'
+import CheckIcon from '@mui/icons-material/Check'
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 
 const TUNING_TEXT = '\n\n위 글을 요약해줘.'
 export default function Page() {
+  const copyToClipboard = useCopyToClipboard()
+
   const [value, setValue] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [summary, setSummary] = useState('')
@@ -61,6 +67,12 @@ export default function Page() {
     },
   })
 
+  const copy = useMutation({
+    mutationFn: async () => {
+      await copyToClipboard.handleCopyClick(`${value}\n\n${summary}`)
+    },
+  })
+
   return (
     <>
       <Flex flexDirection="column" width="100%">
@@ -93,6 +105,50 @@ export default function Page() {
         </Flex>
       </Flex>
       <Markdown>{summary}</Markdown>
+      <Fab
+        color="info"
+        draggable={false}
+        disabled={summary.length === 0}
+        style={{ position: 'fixed', bottom: 24, right: 24 }}
+        variant="extended"
+        onClick={() => copy.mutate()}
+      >
+        <CopyContent
+          copied={copyToClipboard.copySuccess}
+          copying={copy.isPending}
+        />
+      </Fab>
+    </>
+  )
+}
+
+const CopyContent = ({
+  copying,
+  copied,
+}: {
+  copying: boolean
+  copied: boolean
+}) => {
+  if (copying) {
+    return (
+      <>
+        <DownloadIcon />
+        복사중
+      </>
+    )
+  }
+  if (copied) {
+    return (
+      <>
+        <CheckIcon />
+        복사완료
+      </>
+    )
+  }
+  return (
+    <>
+      <FavoriteIcon />
+      복사하기
     </>
   )
 }
