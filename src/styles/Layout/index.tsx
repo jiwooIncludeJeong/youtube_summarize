@@ -1,6 +1,4 @@
 import { PropsWithChildren } from 'react'
-import { css } from '@emotion/react'
-import { bgcolor } from '@mui/system'
 
 export const Layout = ({ children }: PropsWithChildren) => {
   return (

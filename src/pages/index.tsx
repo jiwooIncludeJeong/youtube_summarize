@@ -1,10 +1,9 @@
 import { Button, TextField, Typography } from '@mui/material'
-import { Title } from '@mui/icons-material'
 import { Spacing } from '@/styles/Spacing'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Flex } from '@/styles/Flex'
 import { YOUTUBE_LINK_REGEX } from '@/constants'
-import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript'
+import { TranscriptResponse } from 'youtube-transcript'
 import { GeminiClient } from '@/libraries/Gemini'
 import Markdown from 'react-markdown'
 import { useMutation } from '@tanstack/react-query'
@@ -49,7 +48,7 @@ export default function Page() {
       const { response } = await model.generateContent(`${value}${TUNING_TEXT}`)
       return response.text()
     } catch (error) {
-      alert('에러가 발생했습니다.')
+      alert(`에러가 발생했습니다.\n${JSON.stringify(error)}`)
     }
   }
 
@@ -57,7 +56,7 @@ export default function Page() {
     mutationFn: async () => {
       const subscription = await getTranscript()
       const summary = await getSummary(subscription)
-      setSummary(summary)
+      setSummary(summary ?? '')
     },
   })
 

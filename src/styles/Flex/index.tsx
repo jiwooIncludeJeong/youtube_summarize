@@ -1,5 +1,4 @@
 import { CSSProperties, PropsWithChildren } from 'react'
-import { Property } from 'csstype'
 
 export const Flex = ({
   children,
