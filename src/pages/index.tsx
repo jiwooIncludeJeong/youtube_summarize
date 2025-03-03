@@ -2,11 +2,11 @@ import { Button, TextField, Typography } from '@mui/material'
 import { Spacing } from '@/styles/Spacing'
 import { useCallback, useState } from 'react'
 import { Flex } from '@/styles/Flex'
-import { YOUTUBE_LINK_REGEX } from '@/constants'
-import { TranscriptResponse } from 'youtube-transcript'
 import { GeminiClient } from '@/libraries/Gemini'
 import Markdown from 'react-markdown'
 import { useMutation } from '@tanstack/react-query'
+import { isValidYoutubeURL } from '@/utils/isValidYoutubeURL'
+import { extractVideoId } from '@/utils/extractVideoId'
 
 const TUNING_TEXT = '\n\n위 글을 요약해줘.'
 export default function Page() {
@@ -17,7 +17,7 @@ export default function Page() {
   const validate = useCallback((value: string) => {
     if (value.length === 0) {
       setErrorMessage('링크를 입력해주세요.')
-    } else if (!YOUTUBE_LINK_REGEX.test(value)) {
+    } else if (!isValidYoutubeURL(value)) {
       setErrorMessage('유튜브 링크가 아닙니다.')
     } else {
       setErrorMessage('')
@@ -26,11 +26,12 @@ export default function Page() {
   }, [])
 
   const getTranscript = async () => {
-    const { data }: { data: TranscriptResponse[] } = await (
-      await fetch(`/api/transcript?url=${value}`)
+    const videoId = extractVideoId(value)
+    const { data }: { data: string[] } = await (
+      await fetch(`/api/transcript?videoId=${videoId}`)
     ).json()
 
-    return data.map((v) => v.text).join(' ')
+    return data.map((v) => v).join(' ')
   }
 
   const getSummary = async (value: string) => {
