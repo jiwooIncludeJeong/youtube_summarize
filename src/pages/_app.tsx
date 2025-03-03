@@ -12,6 +12,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <meta name="viewport" content="initial-scale=1, width=device-width" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Youtube Summary" />
+      <meta property="og:site_name" content="Youtube Summary" />
+
       <QueryClientProvider client={queryClient}>
         <Layout>
           <Component {...pageProps} />
