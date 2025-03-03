@@ -104,7 +104,12 @@ export default function Page() {
           </Button>
         </Flex>
       </Flex>
-      <Markdown>{summary}</Markdown>
+      {summary.length > 0 ? (
+        <>
+          <Markdown>{summary}</Markdown>
+          <Spacing size={60} />
+        </>
+      ) : null}
       <Fab
         color="info"
         draggable={false}
